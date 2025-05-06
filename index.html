@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,48 +10,63 @@
             font-family: Arial, sans-serif;
             padding: 20px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: center;
         }
+
         th {
             background-color: #f2f2f2;
         }
+
         .yellow-bg {
             background-color: #FFFF99;
         }
+
         .red-bg {
             background-color: #FFCCCC;
         }
+
         .green-bg {
             background-color: #CCFFCC;
         }
-        input[type="text"], input[type="number"], select {
+
+        input[type="text"],
+        input[type="number"],
+        select {
             width: 90%;
             padding: 5px;
             text-align: right;
         }
+
         .left-align {
             text-align: left;
         }
+
         .col-description {
             width: 200px;
             max-width: 200px;
             white-space: normal;
             word-wrap: break-word;
         }
+
         .currency:before {
             content: "€ ";
         }
+
         .percent:after {
             content: "%";
         }
+
         button {
             padding: 8px 12px;
             margin-right: 5px;
@@ -59,17 +75,23 @@
             border-radius: 4px;
             background-color: #f8f8f8;
         }
-        button#sendEmailBtn, button#previewBtn {
+
+        button#sendEmailBtn,
+        button#previewBtn {
             background-color: #4CAF50;
             color: white;
             border: none;
         }
+
         button:hover {
             background-color: #e8e8e8;
         }
-        button#sendEmailBtn:hover, button#previewBtn:hover {
+
+        button#sendEmailBtn:hover,
+        button#previewBtn:hover {
             background-color: #45a049;
         }
+
         .form-header {
             display: flex;
             justify-content: space-between;
@@ -79,10 +101,12 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
+
         .required:after {
             content: " *";
             color: red;
         }
+
         #previewContainer {
             display: none;
             position: fixed;
@@ -94,6 +118,7 @@
             z-index: 1000;
             overflow: auto;
         }
+
         #previewContent {
             background-color: white;
             margin: 50px auto;
@@ -103,6 +128,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             position: relative;
         }
+
         #closePreview {
             position: absolute;
             top: 10px;
@@ -111,15 +137,17 @@
             cursor: pointer;
             color: #555;
         }
+
         #emailButtons {
             margin-top: 20px;
             text-align: center;
         }
     </style>
 </head>
+
 <body>
     <h1>Modulo PDV</h1>
-    
+
     <form id="pdvForm">
         <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 20px;">
             <div>
@@ -139,7 +167,7 @@
                 <input type="text" id="currentDate" style="width: 150px;" readonly required>
             </div>
         </div>
-        
+
         <table id="dataTable">
             <tr>
                 <th class="left-align col-description">DESCRIZIONE</th>
@@ -238,7 +266,7 @@
             </tr>
             <tr>
                 <td class="left-align col-description">PREZZO MEDIO BRUNO</td>
-                <td class="currency">340,00</td>
+                <td>340,00</td>
                 <td class="red-bg"><input type="number" step="0.01" id="prezzoBruno" class="currency"></td>
             </tr>
             <tr>
@@ -339,13 +367,4 @@
             <tr>
                 <td class="left-align col-description">SBS</td>
                 <td>0,00%</td>
-                <td class="green-bg"><input type="number" step="0.01" id="sbs" class="percent"></td>
-            </tr>
-            <tr>
-                <td class="left-align col-description">EKOS</td>
-                <td>0,00%</td>
-                <td class="green-bg"><input type="number" step="0.01" id="ekos" class="percent"></td>
-            </tr>
-            <tr>
-                <td class="left-align col-description">XDE TOTALE</td>
-                <td>0,00%
+                <td class="green-bg"><input type="number" step="

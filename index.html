@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modulo PDV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .yellow-bg {
+            background-color: #FFFF99;
+        }
+        .red-bg {
+            background-color: #FFCCCC;
+        }
+        .green-bg {
+            background-color: #CCFFCC;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 90%;
+            padding: 5px;
+            text-align: right;
+        }
+        .left-align {
+            text-align: left;
+        }
+        .currency:before {
+            content: "€ ";
+        }
+        .percent:after {
+            content: "%";
+        }
+        button {
+            padding: 8px 12px;
+            margin-right: 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f8f8f8;
+        }
+        button#sendEmailBtn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        button:hover {
+            background-color: #e8e8e8;
+        }
+        button#sendEmailBtn:hover {
+            background-color: #45a049;
+        }
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .required:after {
+            content: " *";
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Modulo PDV</h1>
+    
+    <form id="pdvForm">
+        <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 20px;">
+            <div>
+                <label for="pdvName" style="font-weight: bold;" class="required">PDV: </label>
+                <select id="pdvName" style="width: 200px; padding: 5px;" required>
+                    <option value="">Seleziona PDV</option>
+                    <option value="Fano">Fano</option>
+                    <option value="Monsano">Monsano</option>
+                    <option value="Osimo">Osimo</option>
+                    <option value="Macerata">Macerata</option>
+                    <option value="Civitanova">Civitanova</option>
+                    <option value="Pesaro">Pesaro</option>
+                </select>
+            </div>
+            <div>
+                <label for="currentDate" style="font-weight: bold;" class="required">Data: </label>
+                <input type="text" id="currentDate" style="width: 150px;" readonly required>
+            </div>
+        </div>
+        
+        <table id="dataTable">
+            <tr>
+                <th class="left-align">DESCRIZIONE</th>
+                <th>IDEALE</th>
+                <th>COLONNA DA COMPILARE</th>
+            </tr>
+            <tr>
+                <td class="left-align required">AV BUDGET MESE</td>
+                <td class="yellow-bg">16,13%</td>
+                <td class="red-bg"><input type="number" step="0.01" id="avBudget" class="percent" required></td>
+            </tr>
+            <tr>
+                <td class="left-align required">AV ATTACH MESE</td>
+                <td>50,00%</td>
+                <td class="red-bg"><input type="number" step="0.01" id="avAttach" class="percent" required></td>
+            </tr>
+            <tr>
+                <td class="left-align">DELTA TOTALE MESE FATTURATO</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="deltaFatturato" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">ACCESSORI</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="accessori" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">CLIMA</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="clima" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">BIANCO</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="bianco" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">BRUNO</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="bruno" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">GRIGIO</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="grigio" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">INFORMATICA</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="informatica" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">CONSOLLE</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="consolle" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">MOBILITY</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="mobility" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">PED</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="ped" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">SERVIZI</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="servizi" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">GARANZIE TOTALI</td>
+                <td>6,60%</td>
+                <td class="red-bg"><input type="number" step="0.01" id="garanzieTotal" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">GARANZIE ESTENDO</td>
+                <td>6,50%</td>
+                <td class="red-bg"><input type="number" step="0.01" id="garanzieEstendo" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">AV GARANZIE APPLE</td>
+                <td>53,00%</td>
+                <td class="red-bg"><input type="number" step="0.01" id="avGaranzieApple" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">PREZZO MEDIO CLIMA</td>
+                <td class="currency">236,00</td>
+                <td class="red-bg"><input type="number" step="0.01" id="prezzoClima" class="currency"></td>
+            </tr>
+            <tr>
+                <td class="left-align">PREZZO MEDIO BIANCO</td>
+                <td class="currency">475,00</td>
+                <td class="red-bg"><input type="number" step="0.01" id="prezzoBianco" class="currency"></td>
+            </tr>
+            <tr>
+                <td class="left-align">PREZZO MEDIO BRUNO</td>
+                <td class="currency">340,00</td>
+                <td class="red-bg"><input type="number" step="0.01" id="prezzoBruno" class="currency"></td>
+            </tr>
+            <tr>
+                <td class="left-align">PREZZO MEDIO FAMIGLIA GTC</td>
+                <td class="currency">281,00</td>
+                <td class="red-bg"><input type="number" step="0.01" id="prezzoFamigliaGtc" class="currency"></td>
+            </tr>
+            <tr>
+                <td class="left-align">PREZZO MEDIO INFORMATICA</td>
+                <td class="currency">265,00</td>
+                <td class="red-bg"><input type="number" step="0.01" id="prezzoInformatica" class="currency"></td>
+            </tr>
+            <tr>
+                <td class="left-align">PREZZO MEDIO PED</td>
+                <td class="currency">98,00</td>
+                <td class="red-bg"><input type="number" step="0.01" id="prezzoPed" class="currency"></td>
+            </tr>
+            <tr>
+                <td class="left-align">CAFFE' MESE. INCIDENZA</td>
+                <td>2,50%</td>
+                <td class="red-bg"><input type="number" step="0.01" id="caffeMese" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">XDE PED MESE INCIDENZA</td>
+                <td>15,00%</td>
+                <td class="red-bg"><input type="number" step="0.01" id="xdePedMese" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">AV BUDGET MESE CLIMA FISSO</td>
+                <td class="yellow-bg">16,13%</td>
+                <td class="red-bg"><input type="number" step="0.01" id="avBudgetClima" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">OLED</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="oled" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">AEG</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="aeg" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">ASCIUGATRICI</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="asciugatrici" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">SMARTWATCH</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="smartwatch" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">MOTOROLA GTC</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="motorolaGtc" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">MOBILITA' ELETTRICA</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="mobilitaElettrica" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">ECOTANK</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="ecotank" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">I-ROBOT</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="iRobot" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">SCOPE NO FILI</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="scopeNoFili" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">CAFFE' AUTOMATICHE</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="caffeAutomatiche" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">FORNI MICROONDE TOTALI</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="forniMicroonde" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">MARCHIO KARCHER</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="marchioKarcher" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">MARCHIO SMEG PED</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="marchioSmeg" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">SBS</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="sbs" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">EKOS</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="ekos" class="percent"></td>
+            </tr>
+            <tr>
+                <td class="left-align">XDE TOTALE</td>
+                <td>0,00%</td>
+                <td class="green-bg"><input type="number" step="0.01" id="xdeTotale" class="percent"></td>
+            </tr>
+        </table>
+
+        <div style="margin-top: 20px;">
+            <button type="button" id="saveBtn">Salva Dati</button>
+            <button type="reset">Cancella Tutto</button>
+            <button type="button" id="sendEmailBtn" style="margin-left: 10px; background-color: #4CAF50; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer;">Invia Email</button>
+        </div>
+    </form>
+
+    <script>
+        // Funzione per calcolare il valore nei campi a sfondo giallo e gestire il cambio di colore
+        document.addEventListener('DOMContentLoaded', function() {
+            // Otteniamo la data corrente
+            const now = new Date();
+            const today = now.getDate(); // Giorno corrente del mese
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(); // Numero totale di giorni nel mese corrente
+            
+            // Impostiamo la data corrente nel campo data
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').value = now.toLocaleDateString('it-IT', options);
+            
+            // Calcoliamo il valore: (100% / giorni nel mese) * giorno corrente
+            const yellowFieldValue = ((100 / daysInMonth) * today).toFixed(2);
+            
+            // Impostiamo il valore di default nei campi con sfondo giallo
+            document.getElementById('avBudget').value = yellowFieldValue;
+            document.getElementById('avBudgetClima').value = yellowFieldValue;
+            
+            // Funzione per confrontare i valori e cambiare il colore dello sfondo
+            function compareValues(input) {
+                // Otteniamo il valore della cella ideale
+                const row = input.closest('tr');
+                const idealCell = row.cells[1];
+                
+                // Estraiamo i valori numerici (rimuovendo simboli % e €)
+                let idealValue = idealCell.textContent.trim();
+                idealValue = parseFloat(idealValue.replace(/[€%]/g, ''));
+                
+                const inputValue = parseFloat(input.value || 0);
+                
+                // Cambio colore in base al confronto
+                if (!isNaN(idealValue) && !isNaN(inputValue)) {
+                    if (inputValue >= idealValue) {
+                        input.parentElement.classList.remove('red-bg');
+                        input.parentElement.classList.add('green-bg');
+                    } else {
+                        input.parentElement.classList.remove('green-bg');
+                        input.parentElement.classList.add('red-bg');
+                    }
+                }
+            }
+            
+            // Aggiungiamo event listener per tutti gli input per cambiare il colore
+            const allInputs = document.querySelectorAll('input[type="number"]');
+            allInputs.forEach(function(input) {
+                input.addEventListener('input', function() {
+                    compareValues(this);
+                });
+                
+                // Confronto iniziale per impostare il colore corretto all'avvio
+                compareValues(input);
+            });
+            
+            // Aggiungiamo l'event listener per il pulsante di salvataggio
+            document.getElementById('saveBtn').addEventListener('click', function() {
+                alert('Dati salvati con successo!');
+            });
+            
+            // Funzione per raccogliere i dati e inviarli via email
+            document.getElementById('sendEmailBtn').addEventListener('click', function() {
+                const pdvName = document.getElementById('pdvName').value;
+                const avBudget = document.getElementById('avBudget').value;
+                const avAttach = document.getElementById('avAttach').value;
+                
+                if (!pdvName) {
+                    alert('Selezionare un PDV prima di inviare l\'email');
+                    return;
+                }
+                
+                if (!avBudget) {
+                    alert('Compilare il campo AV BUDGET MESE prima di inviare l\'email');
+                    return;
+                }
+                
+                if (!avAttach) {
+                    alert('Compilare il campo AV ATTACH MESE prima di inviare l\'email');
+                    return;
+                }
+                
+                // Raccogliamo tutti i dati dal form
+                const formData = {};
+                const allFormInputs = document.querySelectorAll('input[type="number"], select#pdvName');
+                allFormInputs.forEach(input => {
+                    formData[input.id] = input.value;
+                });
+                
+                // Otteniamo la data corrente
+                const currentDate = document.getElementById('currentDate').value;
+                
+                // Creiamo il corpo dell'email
+                let emailBody = `Dati PDV: ${pdvName}%0D%0A`;
+                emailBody += `Data: ${currentDate}%0D%0A%0D%0A`;
+                emailBody += 'DESCRIZIONE,IDEALE,VALORE COMPILATO%0D%0A';
+                
+                // Aggiungiamo tutte le righe della tabella
+                const rows = document.querySelectorAll('#dataTable tr');
+                for (let i = 1; i < rows.length; i++) { // Partiamo da 1 per saltare l'intestazione
+                    const cells = rows[i].cells;
+                    const description = cells[0].textContent.trim();
+                    const idealValue = cells[1].textContent.trim();
+                    
+                    // Cerchiamo l'input in questa riga
+                    const input = cells[2].querySelector('input');
+                    const compiledValue = input ? input.value : '';
+                    
+                    emailBody += `${description},${idealValue},${compiledValue}%0D%0A`;
+                }
+                
+                // Apriamo il client email con i dati precompilati
+                const subject = `Dati PDV: ${pdvName} - ${new Date().toLocaleDateString('it-IT')}`;
+                window.location.href = `mailto:d.pavoni@dml-italia.com?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
+            });
+        });
+    </script>
+</body>
+</html>

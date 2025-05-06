@@ -39,6 +39,12 @@
         .left-align {
             text-align: left;
         }
+        .col-description {
+            width: 200px; /* Colonna descrizione più stretta */
+            max-width: 200px;
+            white-space: normal;
+            word-wrap: break-word;
+        }
         .currency:before {
             content: "€ ";
         }
@@ -53,7 +59,7 @@
             border-radius: 4px;
             background-color: #f8f8f8;
         }
-        button#sendEmailBtn {
+        button#sendEmailBtn, button#previewBtn {
             background-color: #4CAF50;
             color: white;
             border: none;
@@ -61,7 +67,7 @@
         button:hover {
             background-color: #e8e8e8;
         }
-        button#sendEmailBtn:hover {
+        button#sendEmailBtn:hover, button#previewBtn:hover {
             background-color: #45a049;
         }
         .form-header {
@@ -76,6 +82,38 @@
         .required:after {
             content: " *";
             color: red;
+        }
+        #previewContainer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow: auto;
+        }
+        #previewContent {
+            background-color: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 900px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        #closePreview {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #555;
+        }
+        #emailButtons {
+            margin-top: 20px;
+            text-align: center;
         }
     </style>
 </head>
@@ -104,212 +142,212 @@
         
         <table id="dataTable">
             <tr>
-                <th class="left-align">DESCRIZIONE</th>
+                <th class="left-align col-description">DESCRIZIONE</th>
                 <th>IDEALE</th>
                 <th>COLONNA DA COMPILARE</th>
             </tr>
             <tr>
-                <td class="left-align required">AV BUDGET MESE</td>
+                <td class="left-align col-description" class="required">AV BUDGET MESE</td>
                 <td class="yellow-bg">16,13%</td>
                 <td class="red-bg"><input type="number" step="0.01" id="avBudget" class="percent" required></td>
             </tr>
             <tr>
-                <td class="left-align required">AV ATTACH MESE</td>
+                <td class="left-align col-description" class="required">AV ATTACH MESE</td>
                 <td>50,00%</td>
                 <td class="red-bg"><input type="number" step="0.01" id="avAttach" class="percent" required></td>
             </tr>
             <tr>
-                <td class="left-align">DELTA TOTALE MESE FATTURATO</td>
+                <td class="left-align col-description">DELTA TOTALE MESE FATTURATO</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="deltaFatturato" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">ACCESSORI</td>
+                <td class="left-align col-description">ACCESSORI</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="accessori" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">CLIMA</td>
+                <td class="left-align col-description">CLIMA</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="clima" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">BIANCO</td>
+                <td class="left-align col-description">BIANCO</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="bianco" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">BRUNO</td>
+                <td class="left-align col-description">BRUNO</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="bruno" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">GRIGIO</td>
+                <td class="left-align col-description">GRIGIO</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="grigio" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">INFORMATICA</td>
+                <td class="left-align col-description">INFORMATICA</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="informatica" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">CONSOLLE</td>
+                <td class="left-align col-description">CONSOLLE</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="consolle" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">MOBILITY</td>
+                <td class="left-align col-description">MOBILITY</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="mobility" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">PED</td>
+                <td class="left-align col-description">PED</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="ped" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">SERVIZI</td>
+                <td class="left-align col-description">SERVIZI</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="servizi" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">GARANZIE TOTALI</td>
+                <td class="left-align col-description">GARANZIE TOTALI</td>
                 <td>6,60%</td>
                 <td class="red-bg"><input type="number" step="0.01" id="garanzieTotal" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">GARANZIE ESTENDO</td>
+                <td class="left-align col-description">GARANZIE ESTENDO</td>
                 <td>6,50%</td>
                 <td class="red-bg"><input type="number" step="0.01" id="garanzieEstendo" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">AV GARANZIE APPLE</td>
+                <td class="left-align col-description">AV GARANZIE APPLE</td>
                 <td>53,00%</td>
                 <td class="red-bg"><input type="number" step="0.01" id="avGaranzieApple" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">PREZZO MEDIO CLIMA</td>
+                <td class="left-align col-description">PREZZO MEDIO CLIMA</td>
                 <td class="currency">236,00</td>
                 <td class="red-bg"><input type="number" step="0.01" id="prezzoClima" class="currency"></td>
             </tr>
             <tr>
-                <td class="left-align">PREZZO MEDIO BIANCO</td>
+                <td class="left-align col-description">PREZZO MEDIO BIANCO</td>
                 <td class="currency">475,00</td>
                 <td class="red-bg"><input type="number" step="0.01" id="prezzoBianco" class="currency"></td>
             </tr>
             <tr>
-                <td class="left-align">PREZZO MEDIO BRUNO</td>
+                <td class="left-align col-description">PREZZO MEDIO BRUNO</td>
                 <td class="currency">340,00</td>
                 <td class="red-bg"><input type="number" step="0.01" id="prezzoBruno" class="currency"></td>
             </tr>
             <tr>
-                <td class="left-align">PREZZO MEDIO FAMIGLIA GTC</td>
+                <td class="left-align col-description">PREZZO MEDIO FAMIGLIA GTC</td>
                 <td class="currency">281,00</td>
                 <td class="red-bg"><input type="number" step="0.01" id="prezzoFamigliaGtc" class="currency"></td>
             </tr>
             <tr>
-                <td class="left-align">PREZZO MEDIO INFORMATICA</td>
+                <td class="left-align col-description">PREZZO MEDIO INFORMATICA</td>
                 <td class="currency">265,00</td>
                 <td class="red-bg"><input type="number" step="0.01" id="prezzoInformatica" class="currency"></td>
             </tr>
             <tr>
-                <td class="left-align">PREZZO MEDIO PED</td>
+                <td class="left-align col-description">PREZZO MEDIO PED</td>
                 <td class="currency">98,00</td>
                 <td class="red-bg"><input type="number" step="0.01" id="prezzoPed" class="currency"></td>
             </tr>
             <tr>
-                <td class="left-align">CAFFE' MESE. INCIDENZA</td>
+                <td class="left-align col-description">CAFFE' MESE. INCIDENZA</td>
                 <td>2,50%</td>
                 <td class="red-bg"><input type="number" step="0.01" id="caffeMese" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">XDE PED MESE INCIDENZA</td>
+                <td class="left-align col-description">XDE PED MESE INCIDENZA</td>
                 <td>15,00%</td>
                 <td class="red-bg"><input type="number" step="0.01" id="xdePedMese" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">AV BUDGET MESE CLIMA FISSO</td>
+                <td class="left-align col-description">AV BUDGET MESE CLIMA FISSO</td>
                 <td class="yellow-bg">16,13%</td>
                 <td class="red-bg"><input type="number" step="0.01" id="avBudgetClima" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">OLED</td>
+                <td class="left-align col-description">OLED</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="oled" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">AEG</td>
+                <td class="left-align col-description">AEG</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="aeg" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">ASCIUGATRICI</td>
+                <td class="left-align col-description">ASCIUGATRICI</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="asciugatrici" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">SMARTWATCH</td>
+                <td class="left-align col-description">SMARTWATCH</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="smartwatch" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">MOTOROLA GTC</td>
+                <td class="left-align col-description">MOTOROLA GTC</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="motorolaGtc" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">MOBILITA' ELETTRICA</td>
+                <td class="left-align col-description">MOBILITA' ELETTRICA</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="mobilitaElettrica" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">ECOTANK</td>
+                <td class="left-align col-description">ECOTANK</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="ecotank" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">I-ROBOT</td>
+                <td class="left-align col-description">I-ROBOT</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="iRobot" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">SCOPE NO FILI</td>
+                <td class="left-align col-description">SCOPE NO FILI</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="scopeNoFili" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">CAFFE' AUTOMATICHE</td>
+                <td class="left-align col-description">CAFFE' AUTOMATICHE</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="caffeAutomatiche" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">FORNI MICROONDE TOTALI</td>
+                <td class="left-align col-description">FORNI MICROONDE TOTALI</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="forniMicroonde" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">MARCHIO KARCHER</td>
+                <td class="left-align col-description">MARCHIO KARCHER</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="marchioKarcher" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">MARCHIO SMEG PED</td>
+                <td class="left-align col-description">MARCHIO SMEG PED</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="marchioSmeg" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">SBS</td>
+                <td class="left-align col-description">SBS</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="sbs" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">EKOS</td>
+                <td class="left-align col-description">EKOS</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="ekos" class="percent"></td>
             </tr>
             <tr>
-                <td class="left-align">XDE TOTALE</td>
+                <td class="left-align col-description">XDE TOTALE</td>
                 <td>0,00%</td>
                 <td class="green-bg"><input type="number" step="0.01" id="xdeTotale" class="percent"></td>
             </tr>
@@ -318,9 +356,23 @@
         <div style="margin-top: 20px;">
             <button type="button" id="saveBtn">Salva Dati</button>
             <button type="reset">Cancella Tutto</button>
-            <button type="button" id="sendEmailBtn" style="margin-left: 10px; background-color: #4CAF50; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer;">Invia Email</button>
+            <button type="button" id="previewBtn" style="margin-left: 10px;">Anteprima Email</button>
+            <button type="button" id="sendEmailBtn" style="margin-left: 10px;">Invia Email</button>
         </div>
     </form>
+
+    <!-- Contenitore per l'anteprima dell'email -->
+    <div id="previewContainer">
+        <div id="previewContent">
+            <span id="closePreview">&times;</span>
+            <h2>Anteprima Email</h2>
+            <div id="previewBody"></div>
+            <div id="emailButtons">
+                <button id="confirmSendBtn">Invia Email</button>
+                <button id="cancelSendBtn">Annulla</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Funzione per calcolare il valore nei campi a sfondo giallo e gestire il cambio di colore
@@ -380,8 +432,102 @@
             document.getElementById('saveBtn').addEventListener('click', function() {
                 alert('Dati salvati con successo!');
             });
+
+            // Funzione per generare una tabella HTML con i dati compilati
+            function generateHTMLTable() {
+                const pdvName = document.getElementById('pdvName').value;
+                const currentDate = document.getElementById('currentDate').value;
+                
+                if (!pdvName) {
+                    alert('Selezionare un PDV prima di visualizzare l\'anteprima');
+                    return null;
+                }
+                
+                // Creiamo l'intestazione HTML
+                let htmlContent = `
+                    <div style="font-family: Arial, sans-serif; padding: 15px;">
+                        <h3>Dati PDV: ${pdvName}</h3>
+                        <p>Data: ${currentDate}</p>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="background-color: #f2f2f2;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 200px;">DESCRIZIONE</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">IDEALE</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">VALORE COMPILATO</th>
+                            </tr>
+                `;
+                
+                // Aggiungiamo le righe della tabella
+                const rows = document.querySelectorAll('#dataTable tr');
+                for (let i = 1; i < rows.length; i++) { // Partiamo da 1 per saltare l'intestazione
+                    const cells = rows[i].cells;
+                    const description = cells[0].textContent.trim();
+                    const idealValue = cells[1].textContent.trim();
+                    
+                    // Determiniamo il colore di sfondo della cella ideale
+                    let idealBgColor = "#ffffff";
+                    if (cells[1].classList.contains('yellow-bg')) {
+                        idealBgColor = "#FFFF99";
+                    }
+                    
+                    // Cerchiamo l'input e determiniamo il colore di sfondo
+                    const inputCell = cells[2];
+                    const input = inputCell.querySelector('input');
+                    const compiledValue = input ? input.value : '';
+                    
+                    let bgColor = "#ffffff";
+                    if (inputCell.classList.contains('red-bg')) {
+                        bgColor = "#FFCCCC";
+                    } else if (inputCell.classList.contains('green-bg')) {
+                        bgColor = "#CCFFCC";
+                    }
+                    
+                    // Determiniamo se il valore è una valuta o una percentuale
+                    let formattedValue = compiledValue;
+                    if (input && input.classList.contains('percent')) {
+                        formattedValue = compiledValue ? compiledValue + "%" : "";
+                    } else if (input && input.classList.contains('currency')) {
+                        formattedValue = compiledValue ? "€ " + compiledValue : "";
+                    }
+                    
+                    // Formattiamo il valore ideale
+                    let formattedIdealValue = idealValue;
+                    
+                    htmlContent += `
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 200px;">${description}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: ${idealBgColor};">${formattedIdealValue}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: ${bgColor};">${formattedValue}</td>
+                        </tr>
+                    `;
+                }
+                
+                htmlContent += `
+                        </table>
+                    </div>
+                `;
+                
+                return htmlContent;
+            }
             
-            // Funzione per raccogliere i dati e inviarli via email
+            // Funzione per mostrare l'anteprima dell'email
+            document.getElementById('previewBtn').addEventListener('click', function() {
+                const htmlTable = generateHTMLTable();
+                if (htmlTable) {
+                    document.getElementById('previewBody').innerHTML = htmlTable;
+                    document.getElementById('previewContainer').style.display = 'block';
+                }
+            });
+            
+            // Chiusura dell'anteprima
+            document.getElementById('closePreview').addEventListener('click', function() {
+                document.getElementById('previewContainer').style.display = 'none';
+            });
+            
+            document.getElementById('cancelSendBtn').addEventListener('click', function() {
+                document.getElementById('previewContainer').style.display = 'none';
+            });
+            
+            // Funzione per inviare direttamente l'email
             document.getElementById('sendEmailBtn').addEventListener('click', function() {
                 const pdvName = document.getElementById('pdvName').value;
                 const avBudget = document.getElementById('avBudget').value;
@@ -402,38 +548,50 @@
                     return;
                 }
                 
-                // Raccogliamo tutti i dati dal form
-                const formData = {};
-                const allFormInputs = document.querySelectorAll('input[type="number"], select#pdvName');
-                allFormInputs.forEach(input => {
-                    formData[input.id] = input.value;
-                });
-                
-                // Otteniamo la data corrente
-                const currentDate = document.getElementById('currentDate').value;
-                
-                // Creiamo il corpo dell'email
-                let emailBody = `Dati PDV: ${pdvName}%0D%0A`;
-                emailBody += `Data: ${currentDate}%0D%0A%0D%0A`;
-                emailBody += 'DESCRIZIONE,IDEALE,VALORE COMPILATO%0D%0A';
-                
-                // Aggiungiamo tutte le righe della tabella
-                const rows = document.querySelectorAll('#dataTable tr');
-                for (let i = 1; i < rows.length; i++) { // Partiamo da 1 per saltare l'intestazione
-                    const cells = rows[i].cells;
-                    const description = cells[0].textContent.trim();
-                    const idealValue = cells[1].textContent.trim();
+                const htmlTable = generateHTMLTable();
+                if (htmlTable) {
+                    // Utilizziamo un approccio alternativo per l'invio dell'email
+                    // Creiamo una tabella in formato testo per il corpo dell'email
+                    let emailBody = `Dati PDV: ${pdvName}%0D%0A`;
+                    emailBody += `Data: ${document.getElementById('currentDate').value}%0D%0A%0D%0A`;
+                    emailBody += 'Si prega di visualizzare il report completo nell\'HTML allegato.%0D%0A';
+                    emailBody += 'Questo messaggio contiene anche una versione testuale dei dati:%0D%0A%0D%0A';
                     
-                    // Cerchiamo l'input in questa riga
-                    const input = cells[2].querySelector('input');
-                    const compiledValue = input ? input.value : '';
+                    // Aggiungiamo tutte le righe della tabella in formato testo
+                    const rows = document.querySelectorAll('#dataTable tr');
+                    for (let i = 1; i < rows.length; i++) {
+                        const cells = rows[i].cells;
+                        const description = cells[0].textContent.trim();
+                        const idealValue = cells[1].textContent.trim();
+                        const input = cells[2].querySelector('input');
+                        const compiledValue = input ? input.value : '';
+                        
+                        emailBody += `${description}: ${idealValue} -> ${compiledValue}%0D%0A`;
+                    }
                     
-                    emailBody += `${description},${idealValue},${compiledValue}%0D%0A`;
+                    // Creiamo il file HTML e utilizziamo il download per permettere l'invio manuale
+                    const blob = new Blob([htmlTable], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `PDV_${pdvName}_${new Date().toISOString().slice(0,10)}.html`;
+                    
+                    // Apriamo il client email
+                    const subject = `Dati PDV: ${pdvName} - ${new Date().toLocaleDateString('it-IT')}`;
+                    window.location.href = `mailto:d.pavoni@dml-italia.com?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
+                    
+                    // Scarichiamo il file HTML che può essere allegato all'email
+                    setTimeout(() => {
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    }, 100);
                 }
-                
-                // Apriamo il client email con i dati precompilati
-                const subject = `Dati PDV: ${pdvName} - ${new Date().toLocaleDateString('it-IT')}`;
-                window.location.href = `mailto:d.pavoni@dml-italia.com?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
+            });
+            
+            // Funzione per confermare l'invio dall'anteprima
+            document.getElementById('confirmSendBtn').addEventListener('click', function() {
+                document.getElementById('previewContainer').style.display = 'none';
+                document.getElementById('sendEmailBtn').click();
             });
         });
     </script>

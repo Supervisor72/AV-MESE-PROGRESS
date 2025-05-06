@@ -45,6 +45,10 @@
             white-space: normal;
             word-wrap: break-word;
         }
+        .col-input {
+            width: 140px; /* Colonna da compilare più stretta */
+            max-width: 140px;
+        }
         .currency:before {
             content: "€ ";
         }
@@ -144,7 +148,7 @@
             <tr>
                 <th class="left-align col-description">DESCRIZIONE</th>
                 <th>IDEALE</th>
-                <th>COLONNA DA COMPILARE</th>
+                <th class="col-input">COLONNA DA COMPILARE</th>
             </tr>
             <tr>
                 <td class="left-align col-description" class="required">AV BUDGET MESE</td>
@@ -550,23 +554,31 @@
                 
                 const htmlTable = generateHTMLTable();
                 if (htmlTable) {
-                    // Utilizziamo un approccio alternativo per l'invio dell'email
-                    // Creiamo una tabella in formato testo per il corpo dell'email
+                    // Creiamo un elenco puntato con i valori compilati per il corpo dell'email
                     let emailBody = `Dati PDV: ${pdvName}%0D%0A`;
                     emailBody += `Data: ${document.getElementById('currentDate').value}%0D%0A%0D%0A`;
                     emailBody += 'Si prega di visualizzare il report completo nell\'HTML allegato.%0D%0A';
                     emailBody += 'Questo messaggio contiene anche una versione testuale dei dati:%0D%0A%0D%0A';
                     
-                    // Aggiungiamo tutte le righe della tabella in formato testo
+                    // Aggiungiamo le righe come elenco puntato con spazio tra un punto e l'altro
                     const rows = document.querySelectorAll('#dataTable tr');
                     for (let i = 1; i < rows.length; i++) {
                         const cells = rows[i].cells;
                         const description = cells[0].textContent.trim();
                         const idealValue = cells[1].textContent.trim();
                         const input = cells[2].querySelector('input');
-                        const compiledValue = input ? input.value : '';
+                        let compiledValue = input ? input.value : '';
                         
-                        emailBody += `${description}: ${idealValue} -> ${compiledValue}%0D%0A`;
+                        // Formatta il valore compilato come percentuale o valuta se necessario
+                        if (input && input.classList.contains('percent') && compiledValue) {
+                            compiledValue += "%";
+                        } else if (input && input.classList.contains('currency') && compiledValue) {
+                            compiledValue = "€ " + compiledValue;
+                        }
+                        
+                        if (compiledValue) {
+                            emailBody += `• ${description}: ${idealValue} -> ${compiledValue}%0D%0A%0D%0A`;
+                        }
                     }
                     
                     // Creiamo il file HTML e utilizziamo il download per permettere l'invio manuale

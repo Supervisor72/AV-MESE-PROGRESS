@@ -558,15 +558,16 @@
                     let emailBody = `Dati PDV: ${pdvName}%0D%0A`;
                     emailBody += `Data: ${document.getElementById('currentDate').value}%0D%0A%0D%0A`;
                     emailBody += 'Si prega di visualizzare il report completo nell\'HTML allegato.%0D%0A';
-                    emailBody += 'Questo messaggio contiene anche una versione testuale dei dati:%0D%0A%0D%0A';
+                    emailBody += 'Questo messaggio contiene i dati critici (campi rossi):%0D%0A%0D%0A';
                     
-                    // Aggiungiamo le righe come elenco puntato con spazio tra un punto e l'altro
+                    // Aggiungiamo SOLO le righe con sfondo rosso come elenco puntato
                     const rows = document.querySelectorAll('#dataTable tr');
                     for (let i = 1; i < rows.length; i++) {
                         const cells = rows[i].cells;
                         const description = cells[0].textContent.trim();
                         const idealValue = cells[1].textContent.trim();
-                        const input = cells[2].querySelector('input');
+                        const inputCell = cells[2];
+                        const input = inputCell.querySelector('input');
                         let compiledValue = input ? input.value : '';
                         
                         // Formatta il valore compilato come percentuale o valuta se necessario
@@ -576,7 +577,8 @@
                             compiledValue = "€ " + compiledValue;
                         }
                         
-                        if (compiledValue) {
+                        // Aggiungi alla mail SOLO se la cella è rossa
+                        if (inputCell.classList.contains('red-bg') && compiledValue) {
                             emailBody += `• ${description}: ${idealValue} -> ${compiledValue}%0D%0A%0D%0A`;
                         }
                     }

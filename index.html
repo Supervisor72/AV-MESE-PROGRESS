@@ -362,7 +362,7 @@
             <button type="reset">Cancella Tutto</button>
             <button type="button" id="previewBtn" style="margin-left: 10px;">Anteprima Email</button>
             <button type="button" id="sendEmailBtn" style="margin-left: 10px;">Invia Email</button>
-        </div>
+            <button type="button" id="sendTelegramBtn" style="margin-left: 10px; background-color: #0088cc; color: white;"> Telegram</button>        </div>
     </form>
 
     <!-- Contenitore per l'anteprima dell'email -->
@@ -606,7 +606,43 @@
             document.getElementById('confirmSendBtn').addEventListener('click', function() {
                 document.getElementById('previewContainer').style.display = 'none';
                 document.getElementById('sendEmailBtn').click();
-            });
+                 document.getElementById('sendTelegramBtn').addEventListener('click', function() {
+                const pdvName = document.getElementById('pdvName').value;
+                const avBudget = document.getElementById('avBudget').value;
+                const avAttach = document.getElementById('avAttach').value;
+
+                if (!pdvName || !avBudget || !avAttach) {
+                    alert('Compila almeno PDV, AV BUDGET MESE e AV ATTACH MESE prima di inviare.');
+                    return;
+                }
+
+                let telegramText = `Dati PDV: ${pdvName}\n`;
+                telegramText += `Data: ${document.getElementById('currentDate').value}\n\n`;
+                telegramText += `Campi critici (rossi):\n`;
+
+                const rows = document.querySelectorAll('#dataTable tr');
+                for (let i = 1; i < rows.length; i++) {
+                    const cells = rows[i].cells;
+                    const description = cells[0].textContent.trim();
+                    const idealValue = cells[1].textContent.trim();
+                    const inputCell = cells[2];
+                    const input = inputCell.querySelector('input');
+                    let compiledValue = input ? input.value : '';
+
+                    if (input && input.classList.contains('percent') && compiledValue) {
+                        compiledValue += "%";
+                    } else if (input && input.classList.contains('currency') && compiledValue) {
+                        compiledValue = "€ " + compiledValue;
+                    }
+
+                    if (inputCell.classList.contains('red-bg') && compiledValue) {
+                        telegramText += `• ${description}: ${idealValue} -> ${compiledValue}\n`;
+                    }
+                }
+
+                const encodedMsg = encodeURIComponent(telegramText);
+                window.open(`https://t.me/share/url?text=${encodedMsg}`, '_blank');
+            });            });
         });
     </script>
 </body>

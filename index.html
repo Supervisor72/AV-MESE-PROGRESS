@@ -152,8 +152,7 @@
             </tr>
             <tr>
                 <td class="left-align col-description" class="required">AV BUDGET MESE</td>
-                <td class="yellow-bg">16,13%</td> 
-                <td class="red-bg"><input type="number" step="0.01" id="avBudget" class="percent" required></td>
+                <td class="yellow-bg" id="idealAvBudget"></td> <td class="red-bg"><input type="number" step="0.01" id="avBudget" class="percent" required></td>
             </tr>
             <tr>
                 <td class="left-align col-description" class="required">AV ATTACH MESE</td>
@@ -272,8 +271,7 @@
             </tr>
             <tr>
                 <td class="left-align col-description">AV BUDGET MESE CLIMA FISSO</td>
-                <td class="yellow-bg">16,13%</td> 
-                <td class="red-bg"><input type="number" step="0.01" id="avBudgetClima" class="percent"></td>
+                <td class="yellow-bg" id="idealAvBudgetClima"></td> <td class="red-bg"><input type="number" step="0.01" id="avBudgetClima" class="percent"></td>
             </tr>
             <tr>
                 <td class="left-align col-description">OLED</td>
@@ -391,31 +389,41 @@
             const yearBefore = yesterday.getFullYear(); // Anno del giorno precedente
 
             // Calcoliamo il numero totale di giorni nel mese del giorno precedente
-            // Passando 0 come giorno al mese successivo si ottiene l'ultimo giorno del mese corrente.
             const daysInMonthBefore = new Date(yearBefore, monthBefore + 1, 0).getDate(); 
             
             // Impostiamo la data visualizzata nel campo data (mostra la data di IERI)
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('currentDate').value = yesterday.toLocaleDateString('it-IT', options);
             
-            // Calcoliamo il valore: (100% / giorni nel mese precedente) * giorno precedente
+            // Calcoliamo il valore IDEALE: (100% / giorni nel mese precedente) * giorno precedente
             const yellowFieldValue = ((100 / daysInMonthBefore) * dayBefore).toFixed(2);
             
-            // Impostiamo il valore di default nei campi input con sfondo giallo (compilabili)
-            document.getElementById('avBudget').value = yellowFieldValue;
-            document.getElementById('avBudgetClima').value = yellowFieldValue;
+            // Impostiamo il valore IDEALE NELLE CELLE DELLA COLONNA "IDEALE"
+            document.getElementById('idealAvBudget').textContent = yellowFieldValue + "%";
+            document.getElementById('idealAvBudgetClima').textContent = yellowFieldValue + "%";
+
+            // I campi di input 'avBudget' e 'avBudgetClima' nella colonna "DA COMPILARE"
+            // ora rimangono vuoti per l'inserimento manuale. NON li popoliamo con yellowFieldValue.
             
             // Funzione per confrontare i valori e cambiare il colore dello sfondo
             function compareValues(input) {
-                // Otteniamo il valore della cella ideale
+                // Otteniamo il valore della cella ideale associata all'input
                 const row = input.closest('tr');
-                const idealCell = row.cells[1];
+                let idealCell;
+                // Controlla se è una delle due righe speciali per prendere l'ID
+                if (input.id === 'avBudget') {
+                    idealCell = document.getElementById('idealAvBudget');
+                } else if (input.id === 'avBudgetClima') {
+                    idealCell = document.getElementById('idealAvBudgetClima');
+                } else {
+                    idealCell = row.cells[1]; // Per tutte le altre righe, prendi la seconda cella
+                }
                 
                 // Estraiamo i valori numerici (rimuovendo simboli % e €)
                 let idealValue = idealCell.textContent.trim();
                 idealValue = parseFloat(idealValue.replace(/[€%]/g, ''));
                 
-                const inputValue = parseFloat(input.value || 0);
+                const inputValue = parseFloat(input.value || 0); // Prende 0 se il campo è vuoto per il confronto
                 
                 // Cambio colore in base al confronto
                 if (!isNaN(idealValue) && !isNaN(inputValue)) {
@@ -426,6 +434,10 @@
                         input.parentElement.classList.remove('green-bg');
                         input.parentElement.classList.add('red-bg');
                     }
+                } else {
+                    // Se l'input è vuoto o non è un numero, imposta sempre lo sfondo rosso
+                    input.parentElement.classList.remove('green-bg');
+                    input.parentElement.classList.add('red-bg');
                 }
             }
             
@@ -436,7 +448,9 @@
                     compareValues(this);
                 });
                 
-                // Confronto iniziale per impostare il colore corretto all'avvio
+                // Eseguiamo il confronto iniziale per impostare il colore corretto all'avvio
+                // Questo è cruciale per i campi che non sono AV BUDGET/CLIMA FISSO
+                // e per assicurare che quelli VUOTI inizino rossi
                 compareValues(input);
             });
             
@@ -473,8 +487,8 @@
                 for (let i = 1; i < rows.length; i++) { // Partiamo da 1 per saltare l'intestazione
                     const cells = rows[i].cells;
                     const description = cells[0].textContent.trim();
-                    const idealValue = cells[1].textContent.trim();
-                    
+                    const idealValue = cells[1].textContent.trim(); // Ora questo viene preso dal HTML o popolato dallo script
+
                     // Determiniamo il colore di sfondo della cella ideale
                     let idealBgColor = "#ffffff";
                     if (cells[1].classList.contains('yellow-bg')) {
@@ -501,7 +515,7 @@
                         formattedValue = compiledValue ? "€ " + compiledValue : "";
                     }
                     
-                    // Formattiamo il valore ideale (già formattato con % o € nell'HTML originale)
+                    // Formattiamo il valore ideale (già formattato con % o € nell'HTML o dallo script)
                     let formattedIdealValue = idealValue; 
                     
                     htmlContent += `
@@ -550,6 +564,8 @@
                     return;
                 }
                 
+                // NOTA: I controlli sui campi AV BUDGET MESE e AV ATTACH MESE sono stati mantenuti
+                // in quanto sono campi "required" e critici per l'invio.
                 if (!avBudget) {
                     alert('Compilare il campo AV BUDGET MESE prima di inviare l\'email');
                     return;
@@ -566,14 +582,16 @@
                     let emailBody = `Dati PDV: ${pdvName}%0D%0A`;
                     emailBody += `Data: ${document.getElementById('currentDate').value}%0D%0A%0D%0A`;
                     emailBody += 'Si prega di visualizzare il report completo nell\'HTML allegato.%0D%0A';
-                    emailBody += 'Dati Critici da Migliorare  (campi rossi):%0D%0A%0D%0A';
+                    emailBody += 'Dati Critici da Migliorare (campi rossi):%0D%0A%0D%0A';
                     
                     // Aggiungiamo SOLO le righe con sfondo rosso come elenco puntato
                     const rows = document.querySelectorAll('#dataTable tr');
                     for (let i = 1; i < rows.length; i++) {
                         const cells = rows[i].cells;
                         const description = cells[0].textContent.trim();
-                        const idealValue = cells[1].textContent.trim();
+                        // Prendi il valore IDEALE dalla cella, non dall'input
+                        const idealValue = cells[1].textContent.trim(); 
+                        
                         const inputCell = cells[2];
                         const input = inputCell.querySelector('input');
                         let compiledValue = input ? input.value : '';
@@ -587,7 +605,7 @@
                         
                         // Aggiungi alla mail SOLO se la cella è rossa
                         if (inputCell.classList.contains('red-bg') && compiledValue) {
-                            emailBody += `• ${description}: ${idealValue} -> ${compiledValue}%0D%0A%0D%0A`;
+                            emailBody += `• ${description}: IDEALE ${idealValue} -> COMPILATO ${compiledValue}%0D%0A%0D%0A`;
                         }
                     }
                     
@@ -600,7 +618,7 @@
                     
                     // Apriamo il client email
                     const subject = `Dati PDV: ${pdvName} - ${new Date().toLocaleDateString('it-IT')}`;
-                    window.location.href = `mailto:d.pavoni@dml-italia.com?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
+                    window.location.href = `mailto:d.pavoni@dml-italia.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
                     
                     // Scarichiamo il file HTML che può essere allegato all'email
                     setTimeout(() => {

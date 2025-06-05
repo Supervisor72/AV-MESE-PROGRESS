@@ -152,7 +152,7 @@
             </tr>
             <tr>
                 <td class="left-align col-description" class="required">AV BUDGET MESE</td>
-                <td class="yellow-bg">16,13%</td>
+                <td class="yellow-bg">16,13%</td> 
                 <td class="red-bg"><input type="number" step="0.01" id="avBudget" class="percent" required></td>
             </tr>
             <tr>
@@ -272,7 +272,7 @@
             </tr>
             <tr>
                 <td class="left-align col-description">AV BUDGET MESE CLIMA FISSO</td>
-                <td class="yellow-bg">16,13%</td>
+                <td class="yellow-bg">16,13%</td> 
                 <td class="red-bg"><input type="number" step="0.01" id="avBudgetClima" class="percent"></td>
             </tr>
             <tr>
@@ -365,7 +365,6 @@
         </div>
     </form>
 
-    <!-- Contenitore per l'anteprima dell'email -->
     <div id="previewContainer">
         <div id="previewContent">
             <span id="closePreview">&times;</span>
@@ -379,21 +378,30 @@
     </div>
 
     <script>
-        // Funzione per calcolare il valore nei campi a sfondo giallo e gestire il cambio di colore
         document.addEventListener('DOMContentLoaded', function() {
             // Otteniamo la data corrente
             const now = new Date();
-            const today = now.getDate(); // Giorno corrente del mese
-            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(); // Numero totale di giorni nel mese corrente
             
-            // Impostiamo la data corrente nel campo data
+            // Creiamo una nuova data per il giorno precedente
+            const yesterday = new Date(now);
+            yesterday.setDate(now.getDate() - 1); // Sottraiamo un giorno
+            
+            const dayBefore = yesterday.getDate(); // Giorno del mese precedente
+            const monthBefore = yesterday.getMonth(); // Mese del giorno precedente (0-11)
+            const yearBefore = yesterday.getFullYear(); // Anno del giorno precedente
+
+            // Calcoliamo il numero totale di giorni nel mese del giorno precedente
+            // Passando 0 come giorno al mese successivo si ottiene l'ultimo giorno del mese corrente.
+            const daysInMonthBefore = new Date(yearBefore, monthBefore + 1, 0).getDate(); 
+            
+            // Impostiamo la data visualizzata nel campo data (mostra la data di IERI)
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('currentDate').value = now.toLocaleDateString('it-IT', options);
+            document.getElementById('currentDate').value = yesterday.toLocaleDateString('it-IT', options);
             
-            // Calcoliamo il valore: (100% / giorni nel mese) * giorno corrente
-            const yellowFieldValue = ((100 / daysInMonth) * today).toFixed(2);
+            // Calcoliamo il valore: (100% / giorni nel mese precedente) * giorno precedente
+            const yellowFieldValue = ((100 / daysInMonthBefore) * dayBefore).toFixed(2);
             
-            // Impostiamo il valore di default nei campi con sfondo giallo
+            // Impostiamo il valore di default nei campi input con sfondo giallo (compilabili)
             document.getElementById('avBudget').value = yellowFieldValue;
             document.getElementById('avBudgetClima').value = yellowFieldValue;
             
@@ -493,8 +501,8 @@
                         formattedValue = compiledValue ? "€ " + compiledValue : "";
                     }
                     
-                    // Formattiamo il valore ideale
-                    let formattedIdealValue = idealValue;
+                    // Formattiamo il valore ideale (già formattato con % o € nell'HTML originale)
+                    let formattedIdealValue = idealValue; 
                     
                     htmlContent += `
                         <tr>
@@ -558,7 +566,7 @@
                     let emailBody = `Dati PDV: ${pdvName}%0D%0A`;
                     emailBody += `Data: ${document.getElementById('currentDate').value}%0D%0A%0D%0A`;
                     emailBody += 'Si prega di visualizzare il report completo nell\'HTML allegato.%0D%0A';
-                    emailBody += 'Dati Critici da Migliorare  (campi rossi):%0D%0A%0D%0A';
+                    emailBody += 'Dati Critici da Migliorare  (campi rossi):%0D%0A%0D%0A';
                     
                     // Aggiungiamo SOLO le righe con sfondo rosso come elenco puntato
                     const rows = document.querySelectorAll('#dataTable tr');

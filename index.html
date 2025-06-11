@@ -63,7 +63,7 @@
             border-radius: 4px;
             background-color: #f8f8f8;
         }
-        button#sendEmailBtn, button#previewBtn {
+        button#sendEmailBtn {
             background-color: #4CAF50;
             color: white;
             border: none;
@@ -71,7 +71,7 @@
         button:hover {
             background-color: #e8e8e8;
         }
-        button#sendEmailBtn:hover, button#previewBtn:hover {
+        button#sendEmailBtn:hover {
             background-color: #45a049;
         }
         .form-header {
@@ -87,8 +87,9 @@
             content: " *";
             color: red;
         }
+        /* Stili per l'anteprima, che ora è nascosta/inutilizzata */
         #previewContainer {
-            display: none;
+            display: none; /* Nasconde l'intero contenitore dell'anteprima */
             position: fixed;
             top: 0;
             left: 0;
@@ -123,7 +124,7 @@
 </head>
 <body>
     <h1>Modulo PDV</h1>
-    
+
     <form id="pdvForm">
         <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 20px;">
             <div>
@@ -143,7 +144,7 @@
                 <input type="text" id="currentDate" style="width: 150px;" readonly required>
             </div>
         </div>
-        
+
         <table id="dataTable">
             <tr>
                 <th class="left-align col-description">DESCRIZIONE</th>
@@ -151,11 +152,11 @@
                 <th class="col-input">COLONNA DA COMPILARE</th>
             </tr>
             <tr>
-                <td class="left-align col-description" class="required">AV BUDGET MESE</td>
+                <td class="left-align col-description required">AV BUDGET MESE</td>
                 <td class="yellow-bg" id="idealAvBudget"></td> <td class="red-bg"><input type="number" step="0.01" id="avBudget" class="percent" required></td>
             </tr>
             <tr>
-                <td class="left-align col-description" class="required">AV ATTACH MESE</td>
+                <td class="left-align col-description required">AV ATTACH MESE</td>
                 <td>50,00%</td>
                 <td class="red-bg"><input type="number" step="0.01" id="avAttach" class="percent" required></td>
             </tr>
@@ -358,281 +359,146 @@
         <div style="margin-top: 20px;">
             <button type="button" id="saveBtn">Salva Dati</button>
             <button type="reset">Cancella Tutto</button>
-            <button type="button" id="previewBtn" style="margin-left: 10px;">Anteprima Email</button>
             <button type="button" id="sendEmailBtn" style="margin-left: 10px;">Invia Email</button>
         </div>
     </form>
-
-    <div id="previewContainer">
-        <div id="previewContent">
-            <span id="closePreview">&times;</span>
-            <h2>Anteprima Email</h2>
-            <div id="previewBody"></div>
-            <div id="emailButtons">
-                <button id="confirmSendBtn">Invia Email</button>
-                <button id="cancelSendBtn">Annulla</button>
-            </div>
-        </div>
-    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Otteniamo la data corrente
             const now = new Date();
-            
+
             // Creiamo una nuova data per il giorno precedente
             const yesterday = new Date(now);
             yesterday.setDate(now.getDate() - 1); // Sottraiamo un giorno
-            
+
             const dayBefore = yesterday.getDate(); // Giorno del mese precedente
             const monthBefore = yesterday.getMonth(); // Mese del giorno precedente (0-11)
             const yearBefore = yesterday.getFullYear(); // Anno del giorno precedente
 
             // Calcoliamo il numero totale di giorni nel mese del giorno precedente
-            const daysInMonthBefore = new Date(yearBefore, monthBefore + 1, 0).getDate(); 
-            
-            // Impostiamo la data visualizzata nel campo data (mostra la data di IERI)
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('currentDate').value = yesterday.toLocaleDateString('it-IT', options);
-            
+            const daysInMonthBefore = new Date(yearBefore, monthBefore + 1, 0).getDate();
+
             // Calcoliamo il valore IDEALE: (100% / giorni nel mese precedente) * giorno precedente
             const yellowFieldValue = ((100 / daysInMonthBefore) * dayBefore).toFixed(2);
-            
+
             // Impostiamo il valore IDEALE NELLE CELLE DELLA COLONNA "IDEALE"
             document.getElementById('idealAvBudget').textContent = yellowFieldValue + "%";
             document.getElementById('idealAvBudgetClima').textContent = yellowFieldValue + "%";
 
-            // I campi di input 'avBudget' e 'avBudgetClima' nella colonna "DA COMPILARE"
-            // ora rimangono vuoti per l'inserimento manuale. NON li popoliamo con yellowFieldValue.
-            
             // Funzione per confrontare i valori e cambiare il colore dello sfondo
             function compareValues(input) {
-                // Otteniamo il valore della cella ideale associata all'input
                 const row = input.closest('tr');
                 let idealCell;
-                // Controlla se è una delle due righe speciali per prendere l'ID
+
                 if (input.id === 'avBudget') {
                     idealCell = document.getElementById('idealAvBudget');
                 } else if (input.id === 'avBudgetClima') {
                     idealCell = document.getElementById('idealAvBudgetClima');
                 } else {
-                    idealCell = row.cells[1]; // Per tutte le altre righe, prendi la seconda cella
+                    idealCell = row.cells[1];
                 }
-                
-                // Estraiamo i valori numerici (rimuovendo simboli % e €)
+
                 let idealValue = idealCell.textContent.trim();
-                idealValue = parseFloat(idealValue.replace(/[€%]/g, ''));
-                
-                const inputValue = parseFloat(input.value || 0); // Prende 0 se il campo è vuoto per il confronto
-                
-                // Cambio colore in base al confronto
+                idealValue = parseFloat(idealValue.replace(/[€%]/g, '').replace(',', '.'));
+
+                const inputValue = parseFloat((input.value || '0').replace(',', '.'));
+
+                input.parentElement.classList.remove('red-bg', 'green-bg');
+
                 if (!isNaN(idealValue) && !isNaN(inputValue)) {
                     if (inputValue >= idealValue) {
-                        input.parentElement.classList.remove('red-bg');
                         input.parentElement.classList.add('green-bg');
                     } else {
-                        input.parentElement.classList.remove('green-bg');
                         input.parentElement.classList.add('red-bg');
                     }
                 } else {
                     // Se l'input è vuoto o non è un numero, imposta sempre lo sfondo rosso
-                    input.parentElement.classList.remove('green-bg');
                     input.parentElement.classList.add('red-bg');
                 }
             }
-            
+
             // Aggiungiamo event listener per tutti gli input per cambiare il colore
             const allInputs = document.querySelectorAll('input[type="number"]');
             allInputs.forEach(function(input) {
                 input.addEventListener('input', function() {
                     compareValues(this);
                 });
-                
-                // Eseguiamo il confronto iniziale per impostare il colore corretto all'avvio
-                // Questo è cruciale per i campi che non sono AV BUDGET/CLIMA FISSO
-                // e per assicurare che quelli VUOTI inizino rossi
-                compareValues(input);
+                compareValues(input); // Eseguiamo il confronto iniziale per impostare il colore corretto all'avvio
             });
-            
+
             // Aggiungiamo l'event listener per il pulsante di salvataggio
             document.getElementById('saveBtn').addEventListener('click', function() {
                 alert('Dati salvati con successo!');
             });
 
-            // Funzione per generare una tabella HTML con i dati compilati
-            function generateHTMLTable() {
-                const pdvName = document.getElementById('pdvName').value;
-                const currentDate = document.getElementById('currentDate').value;
-                
-                if (!pdvName) {
-                    alert('Selezionare un PDV prima di visualizzare l\'anteprima');
-                    return null;
-                }
-                
-                // Creiamo l'intestazione HTML
-                let htmlContent = `
-                    <div style="font-family: Arial, sans-serif; padding: 15px;">
-                        <h3>Dati PDV: ${pdvName}</h3>
-                        <p>Data: ${currentDate}</p>
-                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-                            <tr style="background-color: #f2f2f2;">
-                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 200px;">DESCRIZIONE</th>
-                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">IDEALE</th>
-                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">VALORE COMPILATO</th>
-                            </tr>
-                `;
-                
-                // Aggiungiamo le righe della tabella
-                const rows = document.querySelectorAll('#dataTable tr');
-                for (let i = 1; i < rows.length; i++) { // Partiamo da 1 per saltare l'intestazione
-                    const cells = rows[i].cells;
-                    const description = cells[0].textContent.trim();
-                    const idealValue = cells[1].textContent.trim(); // Ora questo viene preso dal HTML o popolato dallo script
-
-                    // Determiniamo il colore di sfondo della cella ideale
-                    let idealBgColor = "#ffffff";
-                    if (cells[1].classList.contains('yellow-bg')) {
-                        idealBgColor = "#FFFF99";
-                    }
-                    
-                    // Cerchiamo l'input e determiniamo il colore di sfondo
-                    const inputCell = cells[2];
-                    const input = inputCell.querySelector('input');
-                    const compiledValue = input ? input.value : '';
-                    
-                    let bgColor = "#ffffff";
-                    if (inputCell.classList.contains('red-bg')) {
-                        bgColor = "#FFCCCC";
-                    } else if (inputCell.classList.contains('green-bg')) {
-                        bgColor = "#CCFFCC";
-                    }
-                    
-                    // Determiniamo se il valore è una valuta o una percentuale
-                    let formattedValue = compiledValue;
-                    if (input && input.classList.contains('percent')) {
-                        formattedValue = compiledValue ? compiledValue + "%" : "";
-                    } else if (input && input.classList.contains('currency')) {
-                        formattedValue = compiledValue ? "€ " + compiledValue : "";
-                    }
-                    
-                    // Formattiamo il valore ideale (già formattato con % o € nell'HTML o dallo script)
-                    let formattedIdealValue = idealValue; 
-                    
-                    htmlContent += `
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 200px;">${description}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: ${idealBgColor};">${formattedIdealValue}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: ${bgColor};">${formattedValue}</td>
-                        </tr>
-                    `;
-                }
-                
-                htmlContent += `
-                        </table>
-                    </div>
-                `;
-                
-                return htmlContent;
-            }
-            
-            // Funzione per mostrare l'anteprima dell'email
-            document.getElementById('previewBtn').addEventListener('click', function() {
-                const htmlTable = generateHTMLTable();
-                if (htmlTable) {
-                    document.getElementById('previewBody').innerHTML = htmlTable;
-                    document.getElementById('previewContainer').style.display = 'block';
-                }
-            });
-            
-            // Chiusura dell'anteprima
-            document.getElementById('closePreview').addEventListener('click', function() {
-                document.getElementById('previewContainer').style.display = 'none';
-            });
-            
-            document.getElementById('cancelSendBtn').addEventListener('click', function() {
-                document.getElementById('previewContainer').style.display = 'none';
-            });
-            
-            // Funzione per inviare direttamente l'email
+            // Funzione per inviare l'email con SOLI i valori fuori linea
             document.getElementById('sendEmailBtn').addEventListener('click', function() {
                 const pdvName = document.getElementById('pdvName').value;
-                const avBudget = document.getElementById('avBudget').value;
-                const avAttach = document.getElementById('avAttach').value;
-                
+
                 if (!pdvName) {
-                    alert('Selezionare un PDV prima di inviare l\'email');
+                    alert('Selezionare un PDV prima di inviare l\'email.');
                     return;
                 }
-                
-                // NOTA: I controlli sui campi AV BUDGET MESE e AV ATTACH MESE sono stati mantenuti
-                // in quanto sono campi "required" e critici per l'invio.
-                if (!avBudget) {
-                    alert('Compilare il campo AV BUDGET MESE prima di inviare l\'email');
-                    return;
-                }
-                
-                if (!avAttach) {
-                    alert('Compilare il campo AV ATTACH MESE prima di inviare l\'email');
-                    return;
-                }
-                
-                const htmlTable = generateHTMLTable();
-                if (htmlTable) {
-                    // Creiamo un elenco puntato con i valori compilati per il corpo dell'email
-                    let emailBody = `Dati PDV: ${pdvName}%0D%0A`;
-                    emailBody += `Data: ${document.getElementById('currentDate').value}%0D%0A%0D%0A`;
-                    emailBody += 'Si prega di visualizzare il report completo nell\'HTML allegato.%0D%0A';
-                    emailBody += 'Dati Critici da Migliorare (campi rossi):%0D%0A%0D%0A';
-                    
-                    // Aggiungiamo SOLO le righe con sfondo rosso come elenco puntato
-                    const rows = document.querySelectorAll('#dataTable tr');
-                    for (let i = 1; i < rows.length; i++) {
-                        const cells = rows[i].cells;
-                        const description = cells[0].textContent.trim();
-                        // Prendi il valore IDEALE dalla cella, non dall'input
-                        const idealValue = cells[1].textContent.trim(); 
-                        
-                        const inputCell = cells[2];
-                        const input = inputCell.querySelector('input');
-                        let compiledValue = input ? input.value : '';
-                        
-                        // Formatta il valore compilato come percentuale o valuta se necessario
-                        if (input && input.classList.contains('percent') && compiledValue) {
-                            compiledValue += "%";
-                        } else if (input && input.classList.contains('currency') && compiledValue) {
-                            compiledValue = "€ " + compiledValue;
-                        }
-                        
-                        // Aggiungi alla mail SOLO se la cella è rossa
-                        if (inputCell.classList.contains('red-bg') && compiledValue) {
-                            emailBody += `• ${description}: IDEALE ${idealValue} -> COMPILATO ${compiledValue}%0D%0A%0D%0A`;
-                        }
+
+                // Valida i campi "required" prima di procedere con l'email
+                const requiredInputs = document.querySelectorAll('#pdvForm [required]');
+                for (let i = 0; i < requiredInputs.length; i++) {
+                    if (!requiredInputs[i].value) {
+                        alert(`Il campo "${requiredInputs[i].labels ? requiredInputs[i].labels[0].textContent.replace('*', '').trim() : requiredInputs[i].placeholder || requiredInputs[i].id}" è obbligatorio.`);
+                        requiredInputs[i].focus();
+                        return;
                     }
-                    
-                    // Creiamo il file HTML e utilizziamo il download per permettere l'invio manuale
-                    const blob = new Blob([htmlTable], { type: 'text/html' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `PDV_${pdvName}_${new Date().toISOString().slice(0,10)}.html`;
-                    
-                    // Apriamo il client email
-                    const subject = `Dati PDV: ${pdvName} - ${new Date().toLocaleDateString('it-IT')}`;
-                    window.location.href = `mailto:d.pavoni@dml-italia.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-                    
-                    // Scarichiamo il file HTML che può essere allegato all'email
-                    setTimeout(() => {
-                        a.click();
-                        URL.revokeObjectURL(url);
-                    }, 100);
                 }
+
+                let emailBodyContent = `Gentile Responsabile,\n\n`;
+                emailBodyContent += `Di seguito il report sintetico per il PDV: ${pdvName} relativo alla data: ${document.getElementById('currentDate').value}.\n\n`;
+                emailBodyContent += `Vengono elencati solo i valori che NON sono in linea con gli standard "Ideali":\n\n`;
+
+                let redRowsData = [];
+                const rows = document.querySelectorAll('#dataTable tr');
+                for (let i = 1; i < rows.length; i++) {
+                    const cells = rows[i].cells;
+                    const description = cells[0].textContent.trim();
+                    const idealValue = cells[1].textContent.trim();
+
+                    const inputCell = cells[2];
+                    const input = inputCell.querySelector('input');
+                    let compiledValue = input ? input.value : '';
+
+                    // Formatta il valore compilato come percentuale o valuta se necessario
+                    if (input && input.classList.contains('percent') && compiledValue) {
+                        compiledValue += "%";
+                    } else if (input && input.classList.contains('currency') && compiledValue) {
+                        compiledValue = "€ " + compiledValue;
+                    }
+
+                    // Aggiungi alla mail SOLO se la cella è rossa
+                    if (inputCell.classList.contains('red-bg') && compiledValue) {
+                        redRowsData.push(`• ${description}: IDEALE ${idealValue} -> COMPILATO ${compiledValue}`);
+                    }
+                }
+
+                if (redRowsData.length > 0) {
+                    emailBodyContent += redRowsData.join('\n');
+                } else {
+                    emailBodyContent += "Tutti i valori sono in linea con gli standard. Complimenti!";
+                }
+
+                // Apriamo il client email
+                const subject = `Report PDV: ${pdvName} - ${document.getElementById('currentDate').value}`;
+                window.location.href = `mailto:d.pavoni@dml-italia.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBodyContent)}`;
             });
-            
-            // Funzione per confermare l'invio dall'anteprima
-            document.getElementById('confirmSendBtn').addEventListener('click', function() {
-                document.getElementById('previewContainer').style.display = 'none';
-                document.getElementById('sendEmailBtn').click();
-            });
+
+            // Nascondiamo il pulsante "Anteprima Email" e il contenitore di anteprima, dato che non sono più funzionali
+            const previewBtn = document.getElementById('previewBtn');
+            if (previewBtn) { // Controlla se il pulsante esiste prima di tentare di nasconderlo
+                previewBtn.style.display = 'none';
+            }
+            const previewContainer = document.getElementById('previewContainer');
+            if (previewContainer) { // Controlla se il contenitore esiste prima di tentare di nasconderlo
+                previewContainer.style.display = 'none';
+            }
         });
     </script>
 </body>

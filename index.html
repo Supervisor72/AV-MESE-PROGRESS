@@ -379,9 +379,11 @@
             document.getElementById('currentDate').value = `${dayBeforeFormatted}/${monthBeforeFormatted}/${yearBeforeFormatted}`;
 
             // Calcoliamo il numero totale di giorni nel mese del giorno precedente
+            // Usiamo il mese e l'anno formattati (che sono già riferiti a "yesterday")
             const daysInMonthBefore = new Date(yearBeforeFormatted, monthBeforeFormatted, 0).getDate();
 
             // Calcoliamo il valore IDEALE: (100% / giorni nel mese precedente) * giorno precedente
+            // Usiamo yesterday.getDate() per il giorno del mese precedente
             const yellowFieldValue = ((100 / daysInMonthBefore) * yesterday.getDate()).toFixed(2);
 
             // Impostiamo il valore IDEALE NELLE CELLE DELLA COLONNA "IDEALE"
@@ -477,7 +479,8 @@
 
                     // Aggiungi alla mail SOLO se la cella è rossa
                     if (inputCell.classList.contains('red-bg') && compiledValue) {
-                        redRowsData.push(`• ${description}: IDEALE ${idealValue} -> COMPILATO ${compiledValue}`);
+                        // Modifica qui: "CONSUNTIVO" al posto di "COMPILATO"
+                        redRowsData.push(`• ${description}: IDEALE ${idealValue} -> CONSUNTIVO ${compiledValue}`);
                     }
                 }
 

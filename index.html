@@ -368,19 +368,21 @@
             // Otteniamo la data corrente
             const now = new Date();
 
-            // Creiamo una nuova data per il giorno precedente
+            // Calcoliamo la data del giorno precedente
             const yesterday = new Date(now);
-            yesterday.setDate(now.getDate() - 1); // Sottraiamo un giorno
+            yesterday.setDate(now.getDate() - 1);
 
-            const dayBefore = yesterday.getDate(); // Giorno del mese precedente
-            const monthBefore = yesterday.getMonth(); // Mese del giorno precedente (0-11)
-            const yearBefore = yesterday.getFullYear(); // Anno del giorno precedente
+            // Formatta la data del giorno precedente come "gg/mm/aaaa"
+            const dayBeforeFormatted = String(yesterday.getDate()).padStart(2, '0');
+            const monthBeforeFormatted = String(yesterday.getMonth() + 1).padStart(2, '0'); // Mesi sono 0-indexed
+            const yearBeforeFormatted = yesterday.getFullYear();
+            document.getElementById('currentDate').value = `${dayBeforeFormatted}/${monthBeforeFormatted}/${yearBeforeFormatted}`;
 
             // Calcoliamo il numero totale di giorni nel mese del giorno precedente
-            const daysInMonthBefore = new Date(yearBefore, monthBefore + 1, 0).getDate();
+            const daysInMonthBefore = new Date(yearBeforeFormatted, monthBeforeFormatted, 0).getDate();
 
             // Calcoliamo il valore IDEALE: (100% / giorni nel mese precedente) * giorno precedente
-            const yellowFieldValue = ((100 / daysInMonthBefore) * dayBefore).toFixed(2);
+            const yellowFieldValue = ((100 / daysInMonthBefore) * yesterday.getDate()).toFixed(2);
 
             // Impostiamo il valore IDEALE NELLE CELLE DELLA COLONNA "IDEALE"
             document.getElementById('idealAvBudget').textContent = yellowFieldValue + "%";
@@ -492,11 +494,11 @@
 
             // Nascondiamo il pulsante "Anteprima Email" e il contenitore di anteprima, dato che non sono più funzionali
             const previewBtn = document.getElementById('previewBtn');
-            if (previewBtn) { // Controlla se il pulsante esiste prima di tentare di nasconderlo
+            if (previewBtn) {
                 previewBtn.style.display = 'none';
             }
             const previewContainer = document.getElementById('previewContainer');
-            if (previewContainer) { // Controlla se il contenitore esiste prima di tentare di nasconderlo
+            if (previewContainer) {
                 previewContainer.style.display = 'none';
             }
         });
